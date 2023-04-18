@@ -1,7 +1,5 @@
 let fileInput = document.getElementById('file-upload');
-
-//Input mssv : CMU-CS 303 DIS. IS 301 D
-
+//Input mssv : 26211234181
 const fileName = document.getElementById("file-name");
 
 fileInput.addEventListener("change", function () {
@@ -11,17 +9,17 @@ fileInput.addEventListener("change", function () {
 
 const TimKiemLichThi = async () => {
     var mssv = document.getElementById('mssv').value;
-    // let mssv = "CS 464 H, POS 351 F,MTH 203 DIS, CMU-ENG 230 DIS";
-    let table = document.getElementById('result').getElementsByTagName('tbody')[0];
+    // let mssv = "26211234181";
+    let result = document.getElementById('result');
+    result.innerHTML = "Đang tìm kiếm...";
     mssv = mssv.toUpperCase();
-    let mssvArray = mssv.split(" ");
-    let indexMssv = 2;
+    let mssvString = mssv.trim();
 
-    // if (mssv.length == 0) {
-    //     alert("Chưa nhập mssv !");
-    //     console.error("Chưa nhập mssv !");
-    //     return;
-    // }
+    if (mssv.length == 0) {
+        alert("Chưa nhập mssv !");
+        console.error("Chưa nhập mssv !");
+        return;
+    }
 
     if (fileInput.files.length == 0) {
         alert("Chưa chọn file !");
@@ -29,39 +27,41 @@ const TimKiemLichThi = async () => {
         return;
     }
 
-    await mssvArray.map(function (item) {
-        let Lop = item.trim();
+    let current_head = [];
+    readXlsxFile(fileInput.files[0]).then(function (rows) {
+        // `rows` is an array of rows
+        // each row being an array of cells.
+        let indexOfMssv = 2;
 
-        readXlsxFile(fileInput.files[0]).then(function (rows) {
-            // `rows` is an array of rows
-            // each row being an array of cells.
-            console.log(rows.length);
-            // rows.map(function (row) {
-            //     row.map(function (cell, indexCell) {
-            //         if (String(cell).indexOf("Thời gian") > -1) {
-            //             console.log(row);
-            //         }
-            //     });
+        rows.map(function (row) {
+            row.map(function (cell, indexCell) {
+                if (String(cell).indexOf("Thời gian") > -1) {
+                    current_head = row;
+                }
+                if (cell == "MSV" && indexOfMssv == 2) {
+                    console.log("indexCell", indexCell);
+                    indexOfMssv = indexCell;
+                }
+            });
 
-                
-            // });
-            
+            if (row[indexOfMssv] == mssv) {
+                result.innerHTML = current_head.join(" ").trim();
+                return;
+            }
         });
+
     });
 
-    // setTimeout( () => {
-    //     console.log(numberRowInsert)
-    //     if (numberRowInsert > 0) {
-    //         let control = document.getElementById('control');
-    //         control.style.display = "block";
-    //     }
-    // } , 1000)
+    setTimeout(function () {
+        if (result.innerHTML.length == 0) {
+            result.innerHTML = "Không tìm thấy lịch thi của sinh viên " + mssvString;
+        }
+    },1000);
+
 }
 
 const Reset = () => {
-    let table = document.getElementById('result').getElementsByTagName('tbody')[0];
-    table.innerHTML = "";
-    let control = document.getElementById('control');
-    control.style.display = "none";
+    let result = document.getElementById('result');
+    result.innerHTML = "";
 }
 

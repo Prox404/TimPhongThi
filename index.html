@@ -24,7 +24,7 @@
             </label>
             <input id="file-upload" type="file" accept=".xlsx" />
             
-            <p>Nhập tên môn thi</p>
+            <p>Nhập mssv: </p>
             <input type="text" id="mssv" placeholder="2612345678">
             <button type="button" onclick="TimKiemLichThi()" id="btn-search">Tìm kiếm</button>
             <button type="button" onclick="Reset()" id="btn-reset">Reset</button>
@@ -33,28 +33,12 @@
     </div>
     
 
-    <table id="result" style="width: 100%">
-        <thead class="table-head">
-            <tr>
-
-                <th>Thứ</th>
-                <th>Ngày thi</th>
-                <th>Giờ thi</th>
-
-                <th>Mã môn</th>
-                <th>Môn thi</th>
-                <th>Hình thức thi</th>
-                <th>Khối thi</th>
-
-                <th>Phòng thi</th>
-                <th>Địa điểm</th>
-                <th>Ghi chú</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
+    <div class="result-container">
+        <center>
+            <p style="margin-top: 30px;">Kết quả tìm kiếm :</p>
+            <div id="result"></div>
+        </center>
+    </div>
 </body>
 <script src="./script.js"></script>
 <script src="./read-excel-file.min.js"></script>
