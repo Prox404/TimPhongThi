@@ -1,3 +1,16 @@
+// import * as push from './node_modules/web-push/src/index.js'
+
+let vapidKeys = {
+    publicKey: 'BJgnmYrkIUBeWy_jNWV9AtdYgPXj8_iCiHGcbVrp-DtKM1PgcxNVJYmcnNjeLqK3AHR8DKSJLwj4ZF02PeFW_9A',
+    privateKey: 'HuouD4mA6NGmPljF3_Cca34aMPxer4G_g-453cc1_0g'
+};
+
+// push.setVapidDetails(
+//     'localhost:5500',
+//     vapidKeys.publicKey,
+//     vapidKeys.privateKey
+// );
+
 let fileInput = document.getElementById('file-upload');
 //Input mssv : 26211234181
 const fileName = document.getElementById("file-name");
@@ -8,42 +21,79 @@ fileInput.addEventListener("change", function () {
 
 
 
-function NotificationMe(thoigian, ngay, phong, coso){
+function NotificationMe(thoigian, ngay, phong, coso) {
     let title = "Thông báo lịch thi";
-    let newThoiGian = String(thoigian).replace("h",":");
-    let date = new Date('4/18/2023 11:15:00');
-    console.log(date);
+    let newThoiGian = String(thoigian).replace("h", ":");
+    // let date = new Date('4/21/2023 11:15:00');
+    // console.log(date);
 
     let options = {
+        title: title,
         body: "Thời gian: " + thoigian + "\nNgày thi: " + ngay + "\nPhòng thi: " + phong + "\nCơ sở thi: " + coso,
+        delay: 5000
         // icon: "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/medium-512.png",
         // image: "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/medium-512.png",
-        timestamp: Math.floor(date)
+        // timestamp: Math.floor(date)
     };
-    if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-        let notification = new Notification(title, options);
-         
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission(function (permission) {
-            if (permission === "granted") {
-                let notification = new Notification(title, options);
 
-            }
-        });
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered');
+
+                if (!("Notification" in window)) {
+                    alert("This browser does not support desktop notification");
+                } else if (Notification.permission === "granted") {
+                    console.log("Đã thông báo");
+                    // navigator.serviceWorker.ready.then(function (registration) {
+                    registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: vapidKeys.publicKey
+                    }).then(function (subscription) {
+                        // Gửi thông báo sau 24 giờ
+                        //   const tomorrow = new Date();
+                        //   tomorrow.setDate(tomorrow.getDate() + 1);
+                        registration.showNotification(options.title, options);
+                    });
+                    // });
+
+                } else if (Notification.permission !== "denied") {
+                    Notification.requestPermission(function (permission) {
+                        if (permission === "granted") {
+                            console.log("Đã thông báo");
+                            // navigator.serviceWorker.ready.then(function (registration) {
+                            registration.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: vapidKeys.publicKey
+                            }).then(function (subscription) {
+
+
+                                // Gửi thông báo sau 24 giờ
+                                //   const tomorrow = new Date();
+                                //   tomorrow.setDate(tomorrow.getDate() + 1);
+                                registration.showNotification(options.title, options);
+                            });
+                            // });
+
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
     }
 
 }
 
-function insertToResult(thoigian, ngay, phong, coso){
+function insertToResult(thoigian, ngay, phong, coso) {
     let MainDiv = document.createElement("div");
     MainDiv.className = "card";
     let content = document.createElement("p");
     let btn = document.createElement("button");
     btn.className = "btn btn-notifications";
     btn.innerHTML = "Thông báo cho tôi";
-    btn.addEventListener("click", function(){
+    btn.addEventListener("click", function () {
         NotificationMe(thoigian, ngay, phong, coso);
     });
     content.innerHTML = "Thời gian: " + thoigian + "<br>Ngày thi: " + ngay + "<br>Phòng thi: " + phong + "<br>Cơ sở thi: " + coso;
@@ -51,26 +101,26 @@ function insertToResult(thoigian, ngay, phong, coso){
     content.appendChild(btn);
     document.getElementById("result").appendChild(MainDiv);
 }
- 
+
 const TimKiemLichThi = async () => {
     // var mssv = document.getElementById('mssv').value;
     let mssv = "26211234181";
     let result = document.getElementById('result');
     mssv = mssv.toUpperCase();
     let mssvString = mssv.trim();
-    
+
     if (mssv.length == 0) {
         alert("Chưa nhập mssv !");
         console.error("Chưa nhập mssv !");
         return;
     }
-    
+
     if (fileInput.files.length == 0) {
         alert("Chưa chọn file !");
         console.error("Chưa chọn file !");
         return;
     }
-    
+
     result.innerHTML = "Đang tìm kiếm...";
 
     let current_head = [];
@@ -92,7 +142,7 @@ const TimKiemLichThi = async () => {
 
             if (row[indexOfMssv] == mssv) {
                 // result.innerHTML = current_head.join(" ").trim();
-                let resultStr =  current_head.join(" ").trim();
+                let resultStr = current_head.join(" ").trim();
                 console.log(resultStr);
                 const timeRegex = /Thời gian:\s*([\d]{2}[h:][\d]{2})/i;
                 const dateRegex = /([\d]{2}\/[\d]{2}\/[\d]{4})/;
@@ -109,16 +159,16 @@ const TimKiemLichThi = async () => {
                 let room = roomMatch[1];
                 let campus = campusMatch.trim();
 
-                console.log(time); 
-                console.log(date); 
+                console.log(time);
+                console.log(date);
                 console.log(room);
                 if (String(campus).indexOf("Phòng") > -1) {
                     const addressPattern = /cơ sở:\s+(.+)\s+Lần thi/i;
                     const addressMatch = addressPattern.exec(resultStr);
                     const address = addressMatch[1];
                     campus = address;
-                } 
-                console.log(campus); 
+                }
+                console.log(campus);
                 result.innerHTML = "";
                 insertToResult(time, date, room, campus);
                 return;
@@ -131,7 +181,7 @@ const TimKiemLichThi = async () => {
         if (result.innerHTML.length == 0) {
             result.innerHTML = "Không tìm thấy lịch thi của sinh viên " + mssvString;
         }
-    },1000);
+    }, 1000);
 
 }
 
