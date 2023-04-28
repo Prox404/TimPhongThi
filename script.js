@@ -1,8 +1,7 @@
-const socket = io('https://notifications-api-for-service-worker.vercel.app');
-
-let fileInput = document.getElementById('file-upload');
 //Input mssv : 26211234181
-const fileName = document.getElementById("file-name");
+const server = 'https://notifications-api-for-service-worker.vercel.app';
+const socket = io(server);
+let fileInput = document.getElementById('file-upload');
 
 fileInput.addEventListener("change", function () {
     fileName.textContent = this.value.split("\\").pop();
@@ -82,23 +81,23 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                         applicationServerKey: urlBase64ToUint8Array('BLl_utTXOFdsD7sXCuVv9GMEozNxPoPPpNZpTW64m9E47pRAhmbtLv4Lv6JB9FSQQ2vbAVvf4Dc8Rls4GWyPp3E')
                     }).then(function (subscription) {
                         console.log(JSON.stringify({ subscription }));
-                        fetch('https://notifications-api-for-service-worker.vercel.app/api/subscribe', {
+                        fetch(server + '/api/subscribe', {
                             method: 'POST',
                             body: JSON.stringify({ subscription }),
                             headers: { 'Content-Type': 'application/json' }
                         });
                     });
 
-                    fetch('https://notifications-api-for-service-worker.vercel.app/api/send-notification', {
+                    fetch(server + '/api/send-notification', {
                         method: 'POST',
                         body: JSON.stringify({ title, content, time }),
                         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
                     }).then(res => {
                         console.log(res);
                     })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                        .catch(err => {
+                            console.log(err);
+                        });
 
                 } else if (Notification.permission !== "denied") {
                     Notification.requestPermission(function (permission) {
@@ -109,7 +108,7 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                                 applicationServerKey: 'BLl_utTXOFdsD7sXCuVv9GMEozNxPoPPpNZpTW64m9E47pRAhmbtLv4Lv6JB9FSQQ2vbAVvf4Dc8Rls4GWyPp3E'
                             }).then(function (subscription) {
                                 console.log(subscription);
-                                fetch('https://notifications-api-for-service-worker.vercel.app/api/subscribe', {
+                                fetch(server + '/api/subscribe', {
                                     method: 'POST',
                                     body: JSON.stringify({ subscription }),
                                     headers: {
@@ -118,24 +117,24 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                                     }
                                 });
                             });
-
+                            fetch(server + '/api/send-notification', {
+                                method: 'POST',
+                                body: JSON.stringify({ title, content, time }),
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Access-Control-Allow-Origin': '*'
+                                }
+                            })
+                                .then(res => {
+                                    console.log(res);
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
                         }
                     });
 
-                    fetch('https://notifications-api-for-service-worker.vercel.app/api/send-notification', {
-                        method: 'POST',
-                        body: JSON.stringify({ title, content, time }),
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Access-Control-Allow-Origin': '*'
-                        }
-                    })
-                        .then(res => {
-                            console.log(res);
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
+
                 }
             })
             .catch(error => {
