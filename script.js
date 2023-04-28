@@ -2,6 +2,7 @@
 const server = 'https://notifications-api-for-service-worker.vercel.app';
 const socket = io(server);
 let fileInput = document.getElementById('file-upload');
+const fileName = document.getElementById("file-name");
 
 fileInput.addEventListener("change", function () {
     fileName.textContent = this.value.split("\\").pop();
