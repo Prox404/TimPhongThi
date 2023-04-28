@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000');
+const socket = io('https://notifications-api-for-service-worker.vercel.app');
 
 let fileInput = document.getElementById('file-upload');
 //Input mssv : 26211234181
@@ -55,6 +55,7 @@ function NotificationMe(thoigian, ngay, phong, coso) {
     let options = {
         title: title,
         body: "Thời gian: " + thoigian + "\nNgày thi: " + ngay + "\nPhòng thi: " + phong + "\nCơ sở thi: " + coso,
+        // time: '4/28/2023 17:16:00'
         time: thoigianThi
         // icon: "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/medium-512.png",
         // image: "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/medium-512.png",
@@ -81,17 +82,17 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                         applicationServerKey: urlBase64ToUint8Array('BLl_utTXOFdsD7sXCuVv9GMEozNxPoPPpNZpTW64m9E47pRAhmbtLv4Lv6JB9FSQQ2vbAVvf4Dc8Rls4GWyPp3E')
                     }).then(function (subscription) {
                         console.log(JSON.stringify({ subscription }));
-                        fetch('http://192.168.1.2:3000/api/subscribe', {
+                        fetch('https://notifications-api-for-service-worker.vercel.app/api/subscribe', {
                             method: 'POST',
                             body: JSON.stringify({ subscription }),
                             headers: { 'Content-Type': 'application/json' }
                         });
                     });
 
-                    fetch('http://192.168.1.2:3000/api/send-notification', {
+                    fetch('https://notifications-api-for-service-worker.vercel.app/api/send-notification', {
                         method: 'POST',
                         body: JSON.stringify({ title, content, time }),
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
                     }).then(res => {
                         console.log(res);
                     })
@@ -108,26 +109,33 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                                 applicationServerKey: 'BLl_utTXOFdsD7sXCuVv9GMEozNxPoPPpNZpTW64m9E47pRAhmbtLv4Lv6JB9FSQQ2vbAVvf4Dc8Rls4GWyPp3E'
                             }).then(function (subscription) {
                                 console.log(subscription);
-                                fetch('http://192.168.1.2:3000/api/subscribe', {
+                                fetch('https://notifications-api-for-service-worker.vercel.app/api/subscribe', {
                                     method: 'POST',
                                     body: JSON.stringify({ subscription }),
-                                    headers: { 'Content-Type': 'application/json' }
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Access-Control-Allow-Origin': '*'
+                                    }
                                 });
                             });
 
                         }
                     });
 
-                    fetch('http://192.168.1.2:3000/api/send-notification', {
+                    fetch('https://notifications-api-for-service-worker.vercel.app/api/send-notification', {
                         method: 'POST',
                         body: JSON.stringify({ title, content, time }),
-                        headers: { 'Content-Type': 'application/json' }
-                    }).then(res => {
-                        console.log(res);
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        }
                     })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                        .then(res => {
+                            console.log(res);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 }
             })
             .catch(error => {
@@ -176,7 +184,7 @@ const TimKiemLichThi = async () => {
 
     let current_head = [];
 
-    readXlsxFile(fileInput.files[0], {sheet: 'TONGHOP'}).then(function (rows) {
+    readXlsxFile(fileInput.files[0], { sheet: 'TONGHOP' }).then(function (rows) {
         // `rows` is an array of rows
         // each row being an array of cells.
         let indexOfMssv = 2;
