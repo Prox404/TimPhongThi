@@ -67,7 +67,7 @@ function NotificationMe(thoigian, ngay, phong, coso) {
         let content = options.body;
         let time = options.time;
 
-        navigator.serviceWorker.register('/service-worker.js')
+        navigator.serviceWorker.register('./service-worker.js')
             .then(registration => {
                 console.log('Service Worker registered');
 
