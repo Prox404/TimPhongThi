@@ -1,5 +1,6 @@
 //Input mssv : 26211234181
-const server = 'https://notifications-api-for-service-worker.vercel.app';
+const server = 'http://192.168.1.6:3000';
+// const server = 'https://notifications-api-for-service-worker.vercel.app';
 let fileInput = document.getElementById('file-upload');
 const fileName = document.getElementById("file-name");
 
@@ -68,7 +69,7 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                         fetch(server + '/api/subscribe', {
                             method: 'POST',
                             body: JSON.stringify({ subscription }),
-                            headers: { 'Content-Type': 'application/json' }
+                            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
                         });
                     });
 
