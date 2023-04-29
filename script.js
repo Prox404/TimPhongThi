@@ -1,6 +1,5 @@
 //Input mssv : 26211234181
 const server = 'https://notifications-api-for-service-worker.vercel.app';
-const socket = io(server);
 let fileInput = document.getElementById('file-upload');
 const fileName = document.getElementById("file-name");
 
@@ -13,22 +12,6 @@ const data = {
     content: 'Thời gian: 7h30 - 9h30\nNgày thi: 21/04/2021\nPhòng thi: 101\nCơ sở thi: 1',
     time: '4/21/2021 11:15:00'
 };
-
-socket.on('connection', () => {
-    console.log('Connected');
-});
-
-
-socket.on('new-notification', (data) => {
-    const { title, content, time } = data;
-
-    // Hiển thị thông báo sử dụng Notification API
-    Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-            new Notification(title, { body: content });
-        }
-    });
-});
 
 function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -106,7 +89,7 @@ function NotificationMe(thoigian, ngay, phong, coso) {
                             console.log("Đã thông báo");
                             registration.pushManager.subscribe({
                                 userVisibleOnly: true,
-                                applicationServerKey: 'BLl_utTXOFdsD7sXCuVv9GMEozNxPoPPpNZpTW64m9E47pRAhmbtLv4Lv6JB9FSQQ2vbAVvf4Dc8Rls4GWyPp3E'
+                                applicationServerKey: urlBase64ToUint8Array('BLl_utTXOFdsD7sXCuVv9GMEozNxPoPPpNZpTW64m9E47pRAhmbtLv4Lv6JB9FSQQ2vbAVvf4Dc8Rls4GWyPp3E')
                             }).then(function (subscription) {
                                 console.log(subscription);
                                 fetch(server + '/api/subscribe', {
