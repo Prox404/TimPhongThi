@@ -76,8 +76,10 @@ self.addEventListener('push', function (event) {
     const options = event.data.json();
     const notificationTitle = options.title;
     const notificationOptions = {
-        body: options.body
+        body: options.message,
     };
+
+    console.log(options);
 
     const delay = options.delay || 0; // Thời gian đợi trước
 
