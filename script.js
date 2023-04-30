@@ -1,6 +1,6 @@
 //Input mssv : 26211234181
-const server = 'http://192.168.1.6:3000';
-// const server = 'https://notifications-api-for-service-worker.vercel.app';
+// const server = 'http://192.168.1.6:3000';
+const server = 'https://notifications-api-for-service-worker.vercel.app';
 let fileInput = document.getElementById('file-upload');
 const fileName = document.getElementById("file-name");
 
@@ -146,8 +146,8 @@ function insertToResult(thoigian, ngay, phong, coso) {
 }
 
 const TimKiemLichThi = async () => {
-    // var mssv = document.getElementById('mssv').value;
-    let mssv = "26211234181";
+    var mssv = document.getElementById('mssv').value;
+    // let mssv = "26211234181";
     let result = document.getElementById('result');
     mssv = mssv.toUpperCase();
     let mssvString = mssv.trim();
