@@ -14,6 +14,10 @@ const data = {
     time: '4/21/2021 11:15:00'
 };
 
+Notification.requestPermission(function (status) {
+    console.log('Notification permission status:', status);
+});
+
 function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
